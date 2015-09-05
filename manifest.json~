@@ -2,15 +2,7 @@
     "name": "EP tab",
     "description": "Downloads pics from top-posts in /r/EarthPorn subreddit and uses them as background for empty new tabs.",
     "version": "1.0",
-    "background": {
-	    "page": "newtab.html",
-	    "persistent": false
-    },
     "incognito": "split",
-    
-    "browser_action": {
-        "default_icon": "icon.png"
-    },
     "chrome_url_overrides": {
         "newtab": "newtab.html"
     },
