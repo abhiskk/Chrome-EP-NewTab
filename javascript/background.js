@@ -8,6 +8,6 @@ function setBackgroundImage()
 			document.body.style.backgroundImage = "url(" + imageUrl + ")";
 		}
 	}
-	xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/new/.json?limit=1", true);
+	xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=1", true);
 	xmlHttp.send(null);
 }
