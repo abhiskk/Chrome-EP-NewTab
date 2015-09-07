@@ -11,3 +11,5 @@ function setBackgroundImage()
 	xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=1", true);
 	xmlHttp.send(null);
 }
+
+setBackgroundImage();
