@@ -15,20 +15,17 @@ function getNewImage() {
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             var response = JSON.parse(xmlHttp.response);
-            var imageUrl = response.data.children[0].data.preview.images[0].source.url;
+            var imageUrl = response.data.children[3].data.preview.images[0].source.url;
             imageData = new Image();
             imageData.src = imageUrl;
-            document.body.style.backgroundImage = "url(" + imageData.src + ")";
+            document.body.style.background = "url(" + imageData.src + ") no-repeat center center fixed";
+            document.body.style.backgroundSize = "cover";
+            localStorage.setItem("photo", imageData);
+            console.log(imageUrl);
         }
     }
-    xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=1", true);
+    xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=5", true);
     xmlHttp.send(null);
-}
-
-if (storageAvailable('localStorage')) {
-    console.log("YO!! WE HAVE STORAGE.");
-} else {
-    console.log("NO :( WE DON'T HAVE STORAGE")
 }
 
 getNewImage();
