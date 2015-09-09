@@ -16,13 +16,9 @@ function getNewImage() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             var response = JSON.parse(xmlHttp.response);
             var imageUrl = response.data.children[0].data.preview.images[0].source.url;
-            document.body.style.backgroundImage = "url(" + imageUrl + ")";
-            $.getJSON("https://i.redditmedia.com/AhfIPHSdE76Sy7oZWw3ul9whA_EyTNF4PMO51XYtf1s.jpg?s=c4c7b9aad3f936941f318acdbe5e1554", function(data) {
-                // var dataToStore = JSON.stringify(data);
-                // localStorage.setItem('photo', dataToStore);
-            }).fail(function() {
-                console.log("not able to get the image.")
-            });
+            imageData = new Image();
+            imageData.src = imageUrl;
+            document.body.style.backgroundImage = "url(" + imageData.src + ")";
         }
     }
     xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=1", true);
