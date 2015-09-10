@@ -1,4 +1,6 @@
-function getNewImages(limitImages) {
+limitImages = 10;
+
+function setBackground() {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
@@ -12,11 +14,11 @@ function getNewImages(limitImages) {
                     imageData.src = imageUrl;
                 }
             }
-            index = localStorage.getItem("index");
+            var index = localStorage.getItem("index");
             console.log("index:" + index);
             localStorage.removeItem("index");
             localStorage.setItem("index", (Number(index) + 1) % limitImages);
-            document.body.style.background = "url(" + localStorage["url" + index] + ") no-repeat center center fixed";
+            document.body.style.background = "url(" + localStorage.getItem("url" + index) + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
         }
     }
@@ -24,4 +26,4 @@ function getNewImages(limitImages) {
     xmlHttp.send(null);
 }
 
-getNewImages(10);
+setBackground();
