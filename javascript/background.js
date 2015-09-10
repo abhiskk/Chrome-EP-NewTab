@@ -1,31 +1,27 @@
-function storageAvailable(type) {
-    try {
-        var storage = window[type],
-            x = '__storage_test__';
-        storage.setItem(x, x);
-        return true
-    } catch (e) {
-        return false;
-    }
-}
-
-// TODO darkstar: pass an index to getNewImage to download variety of images.
-function getNewImage() {
+function getNewImages(limitImages) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            var response = JSON.parse(xmlHttp.response);
-            var imageUrl = response.data.children[3].data.preview.images[0].source.url;
-            imageData = new Image();
-            imageData.src = imageUrl;
-            document.body.style.background = "url(" + imageData.src + ") no-repeat center center fixed";
+            if (localStorage.getItem("index") === null) {
+                localStorage.setItem("index", 0);
+                var response = JSON.parse(xmlHttp.response);
+                for (i = 0; i < limitImages; i++) {
+                    var imageUrl = response.data.children[i].data.preview.images[0].source.url;
+                    localStorage.setItem("url" + i, imageUrl);
+                    imageData = new Image();
+                    imageData.src = imageUrl;
+                }
+            }
+            index = localStorage.getItem("index");
+            console.log("index:" + index);
+            localStorage.removeItem("index");
+            localStorage.setItem("index", (Number(index) + 1) % limitImages);
+            document.body.style.background = "url(" + localStorage["url" + index] + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
-            localStorage.setItem("photo", imageData);
-            console.log(imageUrl);
         }
     }
-    xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=5", true);
+    xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=10", true);
     xmlHttp.send(null);
 }
 
-getNewImage();
+getNewImages(10);
