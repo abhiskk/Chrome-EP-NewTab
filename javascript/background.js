@@ -1,5 +1,12 @@
+/**
+ * Number of images to fetch from the subreddit.
+ * @type {Number}
+ */
 limitImages = 10;
 
+/**
+ * Download images and sets the background for newtab.
+ */
 function setBackground() {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
