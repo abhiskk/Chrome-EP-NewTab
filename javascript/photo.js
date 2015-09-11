@@ -3,13 +3,6 @@
  */
 backgrounds.Photo = new Model({
     /**
-     * Initialize.
-     */
-    init: function() {
-        this.storage = new backgrounds.Storage();
-    },
-
-    /**
      * Displays the image.
      */
     display: function(limitImages) {
