@@ -43,19 +43,21 @@ backgrounds.Photo = new Model({
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 var response = JSON.parse(xmlHttp.response);
                 if (Number(count) < 3) {
-                    var imageUrl = response.data.children[0].data.preview.images[0].source.url;
                     for (i = 0; i < cacheSize; i++) {
+                        var imageUrl = response.data.children[i].data.preview.images[0].source.url;
                         localStorage.setItem("url" + i, imageUrl);
                         console.log("Initial caching: " + i);
+                        imageData = new Image();
+                        imageData.src = imageUrl;
                     }
-                    imageData = new Image();
-                    imageData.src = imageUrl;
                 } else {
                     for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
                         var imageUrl = response.data.children[nextIndex].data.preview.images[0].source.url;
                         localStorage.setItem("url" + nextIndex, imageUrl);
                         console.log("Caching: " + nextIndex);
+                        imageData = new Image();
+                        imageData.src = imageUrl;
                     }
                     console.log("Loaded image index: " + index);
                     document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
