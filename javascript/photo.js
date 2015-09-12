@@ -44,14 +44,14 @@ backgrounds.Photo = new Model({
                 var response = JSON.parse(xmlHttp.response);
                 if (Number(count) < 3) {
                     var imageUrl = response.data.children[0].data.preview.images[0].source.url;
-                    for (i = cacheSize - 1; i >= 0; i--) {
+                    for (i = 0; i < cacheSize; i++) {
                         localStorage.setItem("url" + i, imageUrl);
                         console.log("Initial caching: " + i);
                     }
                     imageData = new Image();
                     imageData.src = imageUrl;
                 } else {
-                    for (i = cacheSize - 1; i >= 0; i--) {
+                    for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
                         var imageUrl = response.data.children[nextIndex].data.preview.images[0].source.url;
                         localStorage.setItem("url" + nextIndex, imageUrl);
