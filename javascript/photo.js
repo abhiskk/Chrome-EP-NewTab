@@ -23,46 +23,49 @@ backgrounds.Photo = new Model({
     /**
      * Displays the image.
      */
-    display: function(limitImages) {
+    display: function(limitImages, cacheSize) {
         count = localStorage.getItem("count");
         if (count === null) {
             var order = this.permutation(5);
-            console.log(order);
-            localStorage.setItem("count", 1);
+            localStorage.setItem("count", 0);
+            localStorage.setItem("index", 0);
             localStorage.setItem("image1", order[1]);
             localStorage.setItem("image2", order[2]);
-            document.body.style.background = "url(" + "/images/backup-wallpapers/image"+ order[0] +".jpg" + ") no-repeat center center fixed";
+            document.body.style.background = "url(" + "/images/backup-wallpapers/image" + order[0] + ".jpg" + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
         } else if (Number(count) < 3) {
-            localStorage.setItem("count", Number(count) + 1);
-            document.body.style.background = "url(" + "/images/backup-wallpapers/image"+ localStorage.getItem("image"+count) +".jpg" + ") no-repeat center center fixed";
+            document.body.style.background = "url(" + "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg" + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
-        } else {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.onreadystatechange = function() {
-                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                    if (localStorage.getItem("index") === null) {
-                        localStorage.setItem("index", 0);
+        }
+        var index = localStorage.getItem("index");
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var response = JSON.parse(xmlHttp.response);
+                if (Number(count) < 3) {
+                    var imageUrl = response.data.children[0].data.preview.images[0].source.url;
+                    for (i = cacheSize - 1; i >= 0; i--) {
+                        localStorage.setItem("url" + i, imageUrl);
+                        console.log("Initial caching: " + i);
                     }
-                    var index = localStorage.getItem("index");
-                    if (Number(index) % 10 == 0) {
-                        console.log("Loading images.");
-                        var response = JSON.parse(xmlHttp.response);
-                        for (i = 0; i < limitImages; i++) {
-                            var imageUrl = response.data.children[i].data.preview.images[0].source.url;
-                            localStorage.setItem("url" + i, imageUrl);
-                            imageData = new Image();
-                            imageData.src = imageUrl;
-                        }
+                    imageData = new Image();
+                    imageData.src = imageUrl;
+                } else {
+                    for (i = cacheSize - 1; i >= 0; i--) {
+                        var nextIndex = (Number(index) + 1 + i) % limitImages;
+                        var imageUrl = response.data.children[nextIndex].data.preview.images[0].source.url;
+                        localStorage.setItem("url" + nextIndex, imageUrl);
+                        console.log("Caching: " + nextIndex);
                     }
-                    console.log(index);
-                    localStorage.setItem("index", (Number(index) + 1));
+                    console.log("Loaded image index: " + index);
                     document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
+                    localStorage.setItem("index", (Number(index) + 1));
                 }
             }
-            xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=10", true);
-            xmlHttp.send(null);
         }
+        xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=10", true);
+        xmlHttp.send(null);
+        localStorage.setItem("count", Number(count) + 1);
     }
 });

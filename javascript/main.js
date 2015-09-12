@@ -9,7 +9,7 @@ backgrounds.App = new Model({
         this.getVersion();
         this.photo = new backgrounds.Photo();
 
-        this.photo.display(10);
+        this.photo.display(10, 2);
     },
 
     /**
