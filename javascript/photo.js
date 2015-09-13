@@ -2,7 +2,6 @@
  * Controls the image being displayed in newtab.
  */
 backgrounds.Photo = new Model({
-
     /**
      * Generates a permutation of size N.
      */
@@ -46,7 +45,6 @@ backgrounds.Photo = new Model({
                     for (i = 0; i < cacheSize; i++) {
                         var imageUrl = response.data.children[i].data.preview.images[0].source.url;
                         localStorage.setItem("url" + i, imageUrl);
-                        console.log("Initial caching: " + i);
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
@@ -60,11 +58,9 @@ backgrounds.Photo = new Model({
                         localStorage.setItem("author" + nextIndex, imageAuthor);
                         localStorage.setItem("title" + nextIndex, imageTitle);
 
-                        console.log("Caching: " + nextIndex);
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
-                    console.log("Loaded image index: " + index);
                     document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
                     if(localStorage.getItem("author" + index % limitImages) != null) {
