@@ -54,7 +54,12 @@ backgrounds.Photo = new Model({
                     for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
                         var imageUrl = response.data.children[nextIndex].data.preview.images[0].source.url;
+                        var imageAuthor = response.data.children[nextIndex].data.author;
+                        var imageTitle = response.data.children[nextIndex].data.title;
                         localStorage.setItem("url" + nextIndex, imageUrl);
+                        localStorage.setItem("author" + nextIndex, imageAuthor);
+                        localStorage.setItem("title" + nextIndex, imageTitle);
+
                         console.log("Caching: " + nextIndex);
                         imageData = new Image();
                         imageData.src = imageUrl;
@@ -62,6 +67,28 @@ backgrounds.Photo = new Model({
                     console.log("Loaded image index: " + index);
                     document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
+                    if(localStorage.getItem("author" + index % limitImages) != null) {
+                       
+                        //We display text pertaining to the image at the bottom of the page
+                        
+                        var author = localStorage.getItem("author" + index % limitImages);
+                        var title = localStorage.getItem("title" + index % limitImages);
+                        if(title.indexOf('[') != -1) {
+                            title = title.substring(0, title.indexOf('[')).trim();
+                        }
+                        var textDiv = document.createElement('div');
+                        textDiv.innerText = "\"" + title + "\" - posted by " + author;
+                        textDiv.style.position = 'absolute';
+                        textDiv.style.bottom = 0;
+                        textDiv.style.fontSize = '20px';
+                        textDiv.style.fontWeight = 'bold';
+                        textDiv.style.textAlign = 'center';
+                        textDiv.style.width = '100%';
+                        textDiv.style.zIndex = 100;
+                        textDiv.style.color = 'white';
+                        document.body.appendChild(textDiv);
+
+                    }
                     localStorage.setItem("index", (Number(index) + 1));
                 }
             }
