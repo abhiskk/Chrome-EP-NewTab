@@ -52,12 +52,56 @@ backgrounds.Photo = new Model({
                     for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
                         var imageUrl = response.data.children[nextIndex].data.preview.images[0].source.url;
+                        var imageAuthor = response.data.children[nextIndex].data.author;
+                        var imageTitle = response.data.children[nextIndex].data.title;
                         localStorage.setItem("url" + nextIndex, imageUrl);
+<<<<<<< HEAD
+                        localStorage.setItem("author" + nextIndex, imageAuthor);
+                        localStorage.setItem("title" + nextIndex, imageTitle);
+
+=======
+>>>>>>> master
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
                     document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
+                    if(localStorage.getItem("author" + index % limitImages) != null) {
+                       
+                        //We display text pertaining to the image at the bottom of the page
+                        
+                        var author = localStorage.getItem("author" + index % limitImages);
+                        var title = localStorage.getItem("title" + index % limitImages);
+                        
+                        //Regex magic begins
+                        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
+                        var myArray = myRe.exec(title);
+                        if(myArray != null) {
+                            title = title.slice(0,myArray.index) + title.slice(myRe.lastIndex);
+                        }
+                        //Regex magic ends
+
+                        var div = document.createElement('div');
+                        var span1 = document.createElement('span');
+                        var text1 = document.createTextNode(title.trim());
+                        span1.style.fontSize = '18px';
+                        span1.style.position = 'absolute';
+                        span1.style.bottom = '15px';
+                        span1.style.color = 'white';
+                        span1.style.fontWeight = 'bold';
+                        span1.appendChild(text1);
+                        var span2 = document.createElement('span');
+                        var text2 = document.createTextNode('posted by ' + author.trim());
+                        span2.style.fontSize = '13px';
+                        span2.style.position = 'absolute';
+                        span2.style.color = 'white';
+                        span2.style.bottom = 0;
+                        span2.appendChild(text2);
+                        div.appendChild(span1);
+                        div.appendChild(span2);
+                        document.body.appendChild(div);
+
+                    }
                     localStorage.setItem("index", (Number(index) + 1));
                 }
             }
