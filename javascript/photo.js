@@ -71,7 +71,7 @@ backgrounds.Photo = new Model({
                         var title = localStorage.getItem("title" + index % limitImages);
                         
                         //Regex magic begins
-                        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
+                        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
                         var myArray = myRe.exec(title);
                         if(myArray != null) {
                             title = title.slice(0,myArray.index) + title.slice(myRe.lastIndex);
