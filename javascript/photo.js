@@ -55,9 +55,12 @@ backgrounds.Photo = new Model({
                         var imageAuthor = response.data.children[nextIndex].data.author;
                         var imageTitle = response.data.children[nextIndex].data.title;
                         localStorage.setItem("url" + nextIndex, imageUrl);
+<<<<<<< HEAD
                         localStorage.setItem("author" + nextIndex, imageAuthor);
                         localStorage.setItem("title" + nextIndex, imageTitle);
 
+=======
+>>>>>>> master
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
