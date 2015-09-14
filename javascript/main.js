@@ -7,6 +7,9 @@ backgrounds.App = new Model({
      */
     init: function() {
         this.getVersion();
+        this.photo = new backgrounds.Photo();
+
+        this.photo.display(10, 2);
     },
 
     /**
@@ -15,7 +18,6 @@ backgrounds.App = new Model({
     getVersion: function() {
         var app = chrome.app.getDetails();
         this.version = app ? app.version : 'dev';
-        console.log(this.version);
     }
 });
 
