@@ -69,11 +69,17 @@ backgrounds.Photo = new Model({
                         
                         var author = localStorage.getItem("author" + index % limitImages);
                         var title = localStorage.getItem("title" + index % limitImages);
-                        if(title.indexOf('[') != -1) {
-                            title = title.substring(0, title.indexOf('[')).trim();
+                        
+                        //Regex magic begins
+                        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
+                        var myArray = myRe.exec(title);
+                        if(myArray != null) {
+                            title = title.slice(0,myArray.index) + title.slice(myRe.lastIndex);
                         }
+                        //Regex magic ends
+
                         var textDiv = document.createElement('div');
-                        textDiv.innerText = "\"" + title + "\" - posted by " + author;
+                        textDiv.innerText = "\"" + title.trim() + "\" - posted by " + author;
                         textDiv.style.position = 'absolute';
                         textDiv.style.bottom = 0;
                         textDiv.style.fontSize = '20px';
