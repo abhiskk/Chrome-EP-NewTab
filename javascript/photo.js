@@ -81,7 +81,7 @@ backgrounds.Photo = new Model({
                         var div = document.createElement('div');
                         var span1 = document.createElement('span');
                         var text1 = document.createTextNode(title.trim());
-                        span1.style.fontSize = '20px';
+                        span1.style.fontSize = '18px';
                         span1.style.position = 'absolute';
                         span1.style.bottom = '15px';
                         span1.style.color = 'white';
@@ -89,7 +89,7 @@ backgrounds.Photo = new Model({
                         span1.appendChild(text1);
                         var span2 = document.createElement('span');
                         var text2 = document.createTextNode('posted by ' + author.trim());
-                        span2.style.fontSize = '15px';
+                        span2.style.fontSize = '13px';
                         span2.style.position = 'absolute';
                         span2.style.color = 'white';
                         span2.style.bottom = 0;
