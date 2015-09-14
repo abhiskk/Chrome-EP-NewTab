@@ -62,20 +62,18 @@ backgrounds.Photo = new Model({
                     }
                     document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
-                    if(localStorage.getItem("author" + index % limitImages) != null) {
+                    if (localStorage.getItem("author" + index % limitImages) != null) {
 
-                        //We display text pertaining to the image at the bottom of the page
-
+                        // Display text pertaining to the image at the bottom of the page.
                         var author = localStorage.getItem("author" + index % limitImages);
                         var title = localStorage.getItem("title" + index % limitImages);
 
-                        //Regex magic begins
+                        // Regex matching
                         var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
                         var myArray = myRe.exec(title);
-                        if(myArray != null) {
-                            title = title.slice(0,myArray.index) + title.slice(myRe.lastIndex);
+                        if (myArray != null) {
+                            title = title.slice(0, myArray.index) + title.slice(myRe.lastIndex);
                         }
-                        //Regex magic ends
 
                         var div = document.createElement('div');
                         var span1 = document.createElement('span');
@@ -96,7 +94,6 @@ backgrounds.Photo = new Model({
                         div.appendChild(span1);
                         div.appendChild(span2);
                         document.body.appendChild(div);
-
                     }
                     localStorage.setItem("index", (Number(index) + 1));
                 }
