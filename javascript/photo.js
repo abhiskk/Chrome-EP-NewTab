@@ -55,24 +55,20 @@ backgrounds.Photo = new Model({
                         var imageAuthor = response.data.children[nextIndex].data.author;
                         var imageTitle = response.data.children[nextIndex].data.title;
                         localStorage.setItem("url" + nextIndex, imageUrl);
-<<<<<<< HEAD
                         localStorage.setItem("author" + nextIndex, imageAuthor);
                         localStorage.setItem("title" + nextIndex, imageTitle);
-
-=======
->>>>>>> master
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
                     document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
                     if(localStorage.getItem("author" + index % limitImages) != null) {
-                       
+
                         //We display text pertaining to the image at the bottom of the page
-                        
+
                         var author = localStorage.getItem("author" + index % limitImages);
                         var title = localStorage.getItem("title" + index % limitImages);
-                        
+
                         //Regex magic begins
                         var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
                         var myArray = myRe.exec(title);
