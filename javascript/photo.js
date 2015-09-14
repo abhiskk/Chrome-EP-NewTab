@@ -78,17 +78,25 @@ backgrounds.Photo = new Model({
                         }
                         //Regex magic ends
 
-                        var textDiv = document.createElement('div');
-                        textDiv.innerText = "\"" + title.trim() + "\" - posted by " + author;
-                        textDiv.style.position = 'absolute';
-                        textDiv.style.bottom = 0;
-                        textDiv.style.fontSize = '20px';
-                        textDiv.style.fontWeight = 'bold';
-                        textDiv.style.textAlign = 'center';
-                        textDiv.style.width = '100%';
-                        textDiv.style.zIndex = 100;
-                        textDiv.style.color = 'white';
-                        document.body.appendChild(textDiv);
+                        var div = document.createElement('div');
+                        var span1 = document.createElement('span');
+                        var text1 = document.createTextNode(title.trim());
+                        span1.style.fontSize = '20px';
+                        span1.style.position = 'absolute';
+                        span1.style.bottom = '15px';
+                        span1.style.color = 'white';
+                        span1.style.fontWeight = 'bold';
+                        span1.appendChild(text1);
+                        var span2 = document.createElement('span');
+                        var text2 = document.createTextNode('posted by ' + author.trim());
+                        span2.style.fontSize = '15px';
+                        span2.style.position = 'absolute';
+                        span2.style.color = 'white';
+                        span2.style.bottom = 0;
+                        span2.appendChild(text2);
+                        div.appendChild(span1);
+                        div.appendChild(span2);
+                        document.body.appendChild(div);
 
                     }
                     localStorage.setItem("index", (Number(index) + 1));
