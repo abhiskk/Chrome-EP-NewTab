@@ -92,7 +92,7 @@ backgrounds.Photo = new Model({
                         var text1 = document.createTextNode(title.trim());
                         span1.style.fontSize = '18px';
                         span1.style.position = 'absolute';
-                        span1.style.bottom = '15px';
+                        span1.style.bottom = '34px';
                         span1.style.color = 'white';
                         span1.style.fontWeight = 'bold';
                         span1.appendChild(text1);
@@ -101,7 +101,7 @@ backgrounds.Photo = new Model({
                         span2.style.fontSize = '13px';
                         span2.style.position = 'absolute';
                         span2.style.color = 'white';
-                        span2.style.bottom = 0;
+                        span2.style.bottom = '19px';
                         span2.appendChild(text2);
                         div.appendChild(span1);
                         div.appendChild(span2);
