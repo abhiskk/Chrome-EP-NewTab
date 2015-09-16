@@ -56,10 +56,15 @@ backgrounds.Photo = new Model({
 
     displayTitleAuthor: function(title, author) {
         // Regex matching
-        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x?\u00D7?\u2715?\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
+        var myRe = /(?:\[|\()\s*oc\s*(?:\]|\))/gi;
         var myArray = myRe.exec(title);
         if (myArray != null) {
-            title = title.slice(0, myArray.index) + title.slice(myRe.lastIndex);
+            title = title.slice(0, myArray.index).trim() + ' ' + title.slice(myRe.lastIndex).trim();
+        }
+        myRe = /\[?\(?\s*\d+,?\d*\s*(?:x|\u00D7)\s*\d+,?\d*\s*\]?\)?/gi;
+        myArray = myRe.exec(title);
+        if (myArray != null) {
+            title = title.slice(0, myArray.index).trim() + ' ' + title.slice(myRe.lastIndex).trim();
         }
         var div = document.createElement('div');
         var span1 = document.createElement('span');
@@ -159,7 +164,6 @@ backgrounds.Photo = new Model({
                 // HTTP request completed but was not successful
                 // if Number(count) < 3, then the background image is already set
                 if (Number(count) >= 3) {
-                    console.log("Offline processing...");
                     document.body.style.background = "url(" + "/images/backup-wallpapers/image" + Number(count) % parent.CNT_BACKUP_IMAGES + ".jpg" + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
                     parent.displayTitleAuthor(parent.backupTitles[Number(count) % parent.CNT_BACKUP_IMAGES], parent.backupAuthors[Number(count) % parent.CNT_BACKUP_IMAGES]);
