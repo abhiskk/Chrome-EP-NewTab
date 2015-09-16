@@ -54,7 +54,7 @@ backgrounds.Photo = new Model({
 
     displayTitleAuthor: function(title, author) {
         // Regex matching
-        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
+        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x?\u00D7?\u2715?\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
         var myArray = myRe.exec(title);
         if (myArray != null) {
             title = title.slice(0, myArray.index) + title.slice(myRe.lastIndex);
