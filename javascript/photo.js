@@ -4,13 +4,13 @@
 backgrounds.Photo = new Model({
 
     /**
-    * Number of images in /images/backup-wallpapers
-    */
+     * Number of images in /images/backup-wallpapers
+     */
     CNT_BACKUP_IMAGES: 5,
 
     /**
-    * Titles of the images in /images/backup-wallpapers
-    */
+     * Titles of the images in /images/backup-wallpapers
+     */
     backupTitles: [
         "Moonlit and lava-covered Fuego Volcano, Guatemala",
         "Western Rim, Grand Canyon after the rain.",
@@ -20,8 +20,8 @@ backgrounds.Photo = new Model({
     ],
 
     /**
-    * Authors of the images in /images/backup-wallpapers
-    */
+     * Authors of the images in /images/backup-wallpapers
+     */
     backupAuthors: ["TheLostCrusader", "IamIrene", "Tuurby", "RoonilWazilbob", "Oxus007"],
 
     /**
@@ -44,11 +44,13 @@ backgrounds.Photo = new Model({
     displayShareButtons: function() {
         document.getElementById("twitter_button").style.visibility = "visible";
         document.getElementById("facebook_button").style.visibility = "visible";
+        document.getElementById("download_button").style.visibility = "visible";        
     },
 
     hideShareButtons: function() {
         document.getElementById("twitter_button").style.visibility = "hidden";
         document.getElementById("facebook_button").style.visibility = "hidden";
+        document.getElementById("download_button").style.visibility = "hidden";
     },
 
 
@@ -122,7 +124,7 @@ backgrounds.Photo = new Model({
                     // Caching top images repeatedly.
                     for (i = 0; i < cacheSize; i++) {
                         var imageUrl = response.data.children[i].data.preview.images[0].source.url;
-                        if(Number(count) == 2) {
+                        if (Number(count) == 2) {
                             var imageAuthor = response.data.children[i].data.author;
                             var imageTitle = response.data.children[i].data.title;
                             localStorage.setItem("url" + i, imageUrl);
@@ -153,12 +155,12 @@ backgrounds.Photo = new Model({
                     parent.displayShareButtons();
                     localStorage.setItem("index", (Number(index) + 1));
                 }
-            } else if(xmlHttp.readyState == 4) {
-                //HTTP request completed but was not successful
-                //if Number(count) < 3, then the background image is already set
-                if(Number(count) >= 3) {
+            } else if (xmlHttp.readyState == 4) {
+                // HTTP request completed but was not successful
+                // if Number(count) < 3, then the background image is already set
+                if (Number(count) >= 3) {
                     console.log("Offline processing...");
-                    document.body.style.background = "url(" + "/images/backup-wallpapers/image" +  Number(count) % parent.CNT_BACKUP_IMAGES + ".jpg" + ") no-repeat center center fixed";
+                    document.body.style.background = "url(" + "/images/backup-wallpapers/image" + Number(count) % parent.CNT_BACKUP_IMAGES + ".jpg" + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
                     parent.displayTitleAuthor(parent.backupTitles[Number(count) % parent.CNT_BACKUP_IMAGES], parent.backupAuthors[Number(count) % parent.CNT_BACKUP_IMAGES]);
                     parent.displayShareButtons();
