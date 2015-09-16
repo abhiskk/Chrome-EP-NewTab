@@ -19,17 +19,58 @@ backgrounds.Photo = new Model({
         return p;
     },
 
+
+    displayTitleAuthor: function(title, author) {
+        // Regex matching
+        var myRe = /\[?o?c?\]?\s*\[?\d+,?\d*\s*x\s*\d+,?\d*\s*\]?\s*\[?o?c?\]?/gi;
+        var myArray = myRe.exec(title);
+        if (myArray != null) {
+            title = title.slice(0, myArray.index) + title.slice(myRe.lastIndex);
+        }
+        var div = document.createElement('div');
+        var span1 = document.createElement('span');
+        var text1 = document.createTextNode(title.trim());
+        span1.style.fontSize = '18px';
+        span1.style.position = 'absolute';
+        span1.style.bottom = '34px';
+        span1.style.color = 'white';
+        span1.style.fontWeight = 'bold';
+        span1.appendChild(text1);
+        var span2 = document.createElement('span');
+        var text2 = document.createTextNode('posted by ' + author.trim());
+        span2.style.fontSize = '13px';
+        span2.style.position = 'absolute';
+        span2.style.color = 'white';
+        span2.style.bottom = '19px';
+        span2.appendChild(text2);
+        div.appendChild(span1);
+        div.appendChild(span2);
+        document.body.appendChild(div);
+    },
+
     /**
      * Load first image.
      */
     loadFirstImage: function() {
         var order = this.permutation(5);
+        var titles = [
+            "Moonlit and lava-covered Fuego Volcano, Guatemala",
+            "Western Rim, Grand Canyon after the rain.",
+            "Sunrise in the North Cascades, Washington State",
+            "The Shadow of K2, projected into China across hundreds of miles.",
+            "I caught the last rays of sunset on Half Dome, Yosemite"
+        ];
+        var authors = ["TheLostCrusader", "IamIrene", "vihlun", "RoonilWazilbob", "Oxus007"];
         localStorage.setItem("count", 0);
         localStorage.setItem("index", 0);
-        localStorage.setItem("image1", order[1]);
-        localStorage.setItem("image2", order[2]);
+        for (i = 1; i < 5; i++) {
+            localStorage.setItem("image" + i, order[i]);
+            localStorage.setItem("title" + i, titles[order[i]]);
+            localStorage.setItem("author" + i, authors[order[i]]);
+        }
         document.body.style.background = "url(" + "/images/backup-wallpapers/image" + order[0] + ".jpg" + ") no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
+        this.displayTitleAuthor(titles[order[0]], authors[order[0]]);
         document.getElementById("twitter_button").style.visibility = "visible";
         document.getElementById("facebook_button").style.visibility = "visible"
     },
@@ -37,7 +78,7 @@ backgrounds.Photo = new Model({
     /**
      * Displays the image.
      */
-        display: function(limitImages, cacheSize) {
+    display: function(limitImages, cacheSize) {
         document.getElementById("twitter_button").style.visibility = "hidden";
         document.getElementById("facebook_button").style.visibility = "hidden"
         count = localStorage.getItem("count");
@@ -46,6 +87,7 @@ backgrounds.Photo = new Model({
         } else if (Number(count) < 3) {
             document.body.style.background = "url(" + "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg" + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
+            this.displayTitleAuthor(localStorage.getItem("title" + count), localStorage.getItem("author" + count));
             document.getElementById("twitter_button").style.visibility = "visible";
             document.getElementById("facebook_button").style.visibility = "visible"
         }
