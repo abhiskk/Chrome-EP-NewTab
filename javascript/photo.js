@@ -56,11 +56,11 @@ backgrounds.Photo = new Model({
         var titles = [
             "Moonlit and lava-covered Fuego Volcano, Guatemala",
             "Western Rim, Grand Canyon after the rain.",
-            "Sunrise in the North Cascades, Washington State",
+            "Queenstown, New Zealand",
             "The Shadow of K2, projected into China across hundreds of miles.",
             "I caught the last rays of sunset on Half Dome, Yosemite"
         ];
-        var authors = ["TheLostCrusader", "IamIrene", "vihlun", "RoonilWazilbob", "Oxus007"];
+        var authors = ["TheLostCrusader", "IamIrene", "Tuurby", "RoonilWazilbob", "Oxus007"];
         localStorage.setItem("count", 0);
         localStorage.setItem("index", 0);
         for (i = 1; i < 5; i++) {
