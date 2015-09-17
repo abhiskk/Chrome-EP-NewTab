@@ -104,8 +104,8 @@ backgrounds.Photo = new Model({
         document.body.style.backgroundSize = "cover";
         this.displayTitleAuthor(this.backupTitles[order[0]], this.backupAuthors[order[0]]);
         this.displayShareButtons();
-        this.setSharingLinks(url);
-        this.setDownloadLink(url);
+        this.setSharingLinks("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
+        this.setDownloadLink("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
     },
 
     /**
@@ -137,8 +137,8 @@ backgrounds.Photo = new Model({
             document.body.style.backgroundSize = "cover";
             this.displayTitleAuthor(localStorage.getItem("title" + count), localStorage.getItem("author" + count));
             this.displayShareButtons();
-            this.setSharingLinks(url);
-            this.setDownloadLink(url);
+            this.setSharingLinks("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
+            this.setDownloadLink("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
         }
         var index = localStorage.getItem("index");
         var xmlHttp = new XMLHttpRequest();
@@ -193,8 +193,8 @@ backgrounds.Photo = new Model({
                     document.body.style.backgroundSize = "cover";
                     parent.displayTitleAuthor(parent.backupTitles[Number(count) % parent.CNT_BACKUP_IMAGES], parent.backupAuthors[Number(count) % parent.CNT_BACKUP_IMAGES]);
                     parent.displayShareButtons();
-                    parent.setSharingLinks(url);
-                    parent.setDownloadLink(url);
+                    parent.setSharingLinks("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
+                    parent.setDownloadLink("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
                 }
             }
         }
