@@ -44,7 +44,7 @@ backgrounds.Photo = new Model({
     displayShareButtons: function() {
         document.getElementById("twitter_button").style.visibility = "visible";
         document.getElementById("facebook_button").style.visibility = "visible";
-        document.getElementById("download_button").style.visibility = "visible";        
+        document.getElementById("download_button").style.visibility = "visible";
     },
 
     hideShareButtons: function() {
@@ -99,10 +99,19 @@ backgrounds.Photo = new Model({
             localStorage.setItem("title" + i, this.backupTitles[order[i]]);
             localStorage.setItem("author" + i, this.backupAuthors[order[i]]);
         }
-        document.body.style.background = "url(" + "/images/backup-wallpapers/image" + order[0] + ".jpg" + ") no-repeat center center fixed";
+        var url = "/images/backup-wallpapers/image" + order[0] + ".jpg";
+        document.body.style.background = "url(" + url + ") no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
         this.displayTitleAuthor(this.backupTitles[order[0]], this.backupAuthors[order[0]]);
         this.displayShareButtons();
+        this.setDownloadLink(url);
+    },
+
+    /**
+     * Sets up the download link for download_button.
+     */
+    setDownloadLink: function(url) {
+        document.getElementById("download_button").href = url;
     },
 
     /**
@@ -114,10 +123,12 @@ backgrounds.Photo = new Model({
         if (count === null) {
             this.loadFirstImage();
         } else if (Number(count) < 3) {
-            document.body.style.background = "url(" + "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg" + ") no-repeat center center fixed";
+            var url = "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg";
+            document.body.style.background = "url(" + url + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
             this.displayTitleAuthor(localStorage.getItem("title" + count), localStorage.getItem("author" + count));
             this.displayShareButtons();
+            this.setDownloadLink(url);
         }
         var index = localStorage.getItem("index");
         var xmlHttp = new XMLHttpRequest();
@@ -152,22 +163,26 @@ backgrounds.Photo = new Model({
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
-                    document.body.style.background = "url(" + localStorage.getItem("url" + index % limitImages) + ") no-repeat center center fixed";
+                    var url = localStorage.getItem("url" + index % limitImages);
+                    document.body.style.background = "url(" + url + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
                     if (localStorage.getItem("author" + index % limitImages) != null) {
                         parent.displayTitleAuthor(localStorage.getItem("title" + index % limitImages), localStorage.getItem("author" + index % limitImages));
                     }
                     parent.displayShareButtons();
+                    parent.setDownloadLink(url);
                     localStorage.setItem("index", (Number(index) + 1));
                 }
             } else if (xmlHttp.readyState == 4) {
                 // HTTP request completed but was not successful
                 // if Number(count) < 3, then the background image is already set
                 if (Number(count) >= 3) {
-                    document.body.style.background = "url(" + "/images/backup-wallpapers/image" + Number(count) % parent.CNT_BACKUP_IMAGES + ".jpg" + ") no-repeat center center fixed";
+                    var url = "/images/backup-wallpapers/image" + Number(count) % parent.CNT_BACKUP_IMAGES + ".jpg";
+                    document.body.style.background = "url(" + url + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
                     parent.displayTitleAuthor(parent.backupTitles[Number(count) % parent.CNT_BACKUP_IMAGES], parent.backupAuthors[Number(count) % parent.CNT_BACKUP_IMAGES]);
                     parent.displayShareButtons();
+                    parent.setDownloadLink(url);
                 }
             }
         }
