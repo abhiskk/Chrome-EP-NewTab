@@ -104,7 +104,16 @@ backgrounds.Photo = new Model({
         document.body.style.backgroundSize = "cover";
         this.displayTitleAuthor(this.backupTitles[order[0]], this.backupAuthors[order[0]]);
         this.displayShareButtons();
+        this.setSharingLinks(url);
         this.setDownloadLink(url);
+    },
+
+    /**
+     * Sets up Facebook and Twitter sharing links.
+     */
+    setSharingLinks: function(url) {
+        document.getElementById("twitter_button").href = "https://twitter.com/intent/tweet?text=Beautiful image&url=" + url;
+        document.getElementById("facebook_button").href = "https://www.facebook.com/sharer/sharer.php?u=" + url;
     },
 
     /**
@@ -128,6 +137,7 @@ backgrounds.Photo = new Model({
             document.body.style.backgroundSize = "cover";
             this.displayTitleAuthor(localStorage.getItem("title" + count), localStorage.getItem("author" + count));
             this.displayShareButtons();
+            this.setSharingLinks(url);
             this.setDownloadLink(url);
         }
         var index = localStorage.getItem("index");
@@ -170,6 +180,7 @@ backgrounds.Photo = new Model({
                         parent.displayTitleAuthor(localStorage.getItem("title" + index % limitImages), localStorage.getItem("author" + index % limitImages));
                     }
                     parent.displayShareButtons();
+                    parent.setSharingLinks(url);
                     parent.setDownloadLink(url);
                     localStorage.setItem("index", (Number(index) + 1));
                 }
@@ -182,6 +193,7 @@ backgrounds.Photo = new Model({
                     document.body.style.backgroundSize = "cover";
                     parent.displayTitleAuthor(parent.backupTitles[Number(count) % parent.CNT_BACKUP_IMAGES], parent.backupAuthors[Number(count) % parent.CNT_BACKUP_IMAGES]);
                     parent.displayShareButtons();
+                    parent.setSharingLinks(url);
                     parent.setDownloadLink(url);
                 }
             }
