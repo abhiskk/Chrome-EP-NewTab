@@ -1,6 +1,6 @@
 {
     "name": "EP tab",
-    "description": "Downloads pics from top-posts in /r/EarthPorn subreddit and uses them as background for empty new tabs.",
+    "description": "Uses beautiful pics of our planet as background in every new tab opened in Chrome.",
     "version": "1.0",
     "icons": {
         "16": "/images/icons/icon16.png",
