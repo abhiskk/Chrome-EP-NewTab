@@ -3,9 +3,9 @@
     "description": "Downloads pics from top-posts in /r/EarthPorn subreddit and uses them as background for empty new tabs.",
     "version": "1.0",
     "icons": {
-        "16": "/images/icons/icon16.png",
-        "48": "/images/icons/icon48.png",
-        "128": "/images/icons/icon128.png"
+        "16": "/images/icons/EP16.png",
+        "48": "/images/icons/EP48.png",
+        "128": "/images/icons/EP128.png"
     },
     "incognito": "split",
     "chrome_url_overrides": {
