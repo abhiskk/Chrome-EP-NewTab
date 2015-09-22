@@ -25,6 +25,17 @@ backgrounds.Photo = new Model({
     backupAuthors: ["TheLostCrusader", "IamIrene", "Tuurby", "RoonilWazilbob", "Oxus007"],
 
     /**
+    * Imgur urls to the images in /images/backup-wallpapers
+    */
+    backupUrls: [
+        "https://i.imgur.com/c5vIKho.jpg",
+        "https://i.imgur.com/93icizv.jpg",
+        "https://i.imgur.com/33f17F7.jpg",
+        "https://i.imgur.com/GwVvkEw.jpg",
+        "https://i.imgur.com/91ko84h.jpg"
+    ],
+
+    /**
      * Generates a permutation of size N.
      */
     permutation: function(N) {
@@ -94,18 +105,19 @@ backgrounds.Photo = new Model({
         var order = this.permutation(this.CNT_BACKUP_IMAGES);
         localStorage.setItem("count", 0);
         localStorage.setItem("index", 0);
-        for (i = 1; i < this.CNT_BACKUP_IMAGES; i++) {
+        for (i = 0; i < this.CNT_BACKUP_IMAGES; i++) {
             localStorage.setItem("image" + i, order[i]);
             localStorage.setItem("title" + i, this.backupTitles[order[i]]);
             localStorage.setItem("author" + i, this.backupAuthors[order[i]]);
+            localStorage.setItem("url" + i, this.backupUrls[order[i]]);
         }
         var url = "/images/backup-wallpapers/image" + order[0] + ".jpg";
         document.body.style.background = "url(" + url + ") no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
         this.displayTitleAuthor(this.backupTitles[order[0]], this.backupAuthors[order[0]]);
         this.displayShareButtons();
-        this.setSharingLinks("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
-        this.setDownloadLink("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
+        this.setSharingLinks(this.backupUrls[order[0]]);
+        this.setDownloadLink(this.backupUrls[order[0]]);
     },
 
     /**
@@ -137,8 +149,8 @@ backgrounds.Photo = new Model({
             document.body.style.backgroundSize = "cover";
             this.displayTitleAuthor(localStorage.getItem("title" + count), localStorage.getItem("author" + count));
             this.displayShareButtons();
-            this.setSharingLinks("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
-            this.setDownloadLink("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
+            this.setSharingLinks(localStorage.getItem("url" + count));
+            this.setDownloadLink(localStorage.getItem("url" + count));
         }
         var index = localStorage.getItem("index");
         var xmlHttp = new XMLHttpRequest();
@@ -188,17 +200,18 @@ backgrounds.Photo = new Model({
                 // HTTP request completed but was not successful
                 // if Number(count) < 3, then the background image is already set
                 if (Number(count) >= 3) {
-                    var url = "/images/backup-wallpapers/image" + Number(count) % parent.CNT_BACKUP_IMAGES + ".jpg";
+                    var offlineIndex = Number(count) % parent.CNT_BACKUP_IMAGES;
+                    var url = "/images/backup-wallpapers/image" + offlineIndex + ".jpg";
                     document.body.style.background = "url(" + url + ") no-repeat center center fixed";
                     document.body.style.backgroundSize = "cover";
-                    parent.displayTitleAuthor(parent.backupTitles[Number(count) % parent.CNT_BACKUP_IMAGES], parent.backupAuthors[Number(count) % parent.CNT_BACKUP_IMAGES]);
+                    parent.displayTitleAuthor(parent.backupTitles[offlineIndex], parent.backupAuthors[offlineIndex]);
                     parent.displayShareButtons();
-                    parent.setSharingLinks("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
-                    parent.setDownloadLink("https://github.com/darkstar112358/Chrome-EP-NewTab/tree/master" + url);
+                    parent.setSharingLinks(this.backupUrls[offlineIndex]);
+                    parent.setDownloadLink(this.backupUrls[offlineIndex]);
                 }
             }
         }
-        xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=10", true);
+        xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit="+Number(limitImages), true);
         xmlHttp.send(null);
         localStorage.setItem("count", Number(count) + 1);
     }
