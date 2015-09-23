@@ -3,9 +3,9 @@
     "description": "Uses beautiful pics of our planet as background in every new tab opened in Chrome.",
     "version": "1.0",
     "icons": {
-        "16": "/images/icons/icon16.png",
-        "48": "/images/icons/icon48.png",
-        "128": "/images/icons/icon128.png"
+        "16": "/images/icons/EP16.png",
+        "48": "/images/icons/EP48.png",
+        "128": "/images/icons/EP128.png"
     },
     "incognito": "split",
     "chrome_url_overrides": {
