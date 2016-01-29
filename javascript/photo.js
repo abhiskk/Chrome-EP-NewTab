@@ -64,7 +64,6 @@ backgrounds.Photo = new Model({
         document.getElementById("download_button").style.visibility = "hidden";
     },
 
-
     displayTitleAuthor: function(title, author) {
         // Regex matching
         var myRe = /(?:\[|\()\s*oc\s*(?:\]|\))/gi;
@@ -78,23 +77,16 @@ backgrounds.Photo = new Model({
             title = title.slice(0, myArray.index).trim() + ' ' + title.slice(myRe.lastIndex).trim();
         }
         var div = document.createElement('div');
-        var span1 = document.createElement('span');
-        var text1 = document.createTextNode(title.trim());
-        span1.style.fontSize = '18px';
-        span1.style.position = 'absolute';
-        span1.style.bottom = '34px';
-        span1.style.color = 'white';
-        span1.style.fontWeight = 'bold';
-        span1.appendChild(text1);
-        var span2 = document.createElement('span');
-        var text2 = document.createTextNode('posted by ' + author.trim());
-        span2.style.fontSize = '13px';
-        span2.style.position = 'absolute';
-        span2.style.color = 'white';
-        span2.style.bottom = '19px';
-        span2.appendChild(text2);
-        div.appendChild(span1);
-        div.appendChild(span2);
+        var titleSpan = document.createElement('span');
+        var titleText = document.createTextNode(title.trim());
+        titleSpan.className = 'title image-text';
+        titleSpan.appendChild(titleText);
+        var authorSpan = document.createElement('span');
+        var authorText = document.createTextNode('posted by ' + author.trim());
+        authorSpan.className = 'author image-text';
+        authorSpan.appendChild(authorText);
+        div.appendChild(titleSpan);
+        div.appendChild(authorSpan);
         document.body.appendChild(div);
     },
 
@@ -143,7 +135,8 @@ backgrounds.Photo = new Model({
         count = localStorage.getItem("count");
         if (count === null) {
             this.loadFirstImage();
-        } else if (Number(count) < 3) {
+        } 
+        else if (Number(count) < 3) {
             var url = "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg";
             document.body.style.background = "url(" + url + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
@@ -172,7 +165,8 @@ backgrounds.Photo = new Model({
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
-                } else {
+                }
+                else {
                     // Caching images to be displayed.
                     for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
@@ -196,7 +190,8 @@ backgrounds.Photo = new Model({
                     parent.setDownloadLink(url);
                     localStorage.setItem("index", (Number(index) + 1));
                 }
-            } else if (xmlHttp.readyState == 4) {
+            } 
+            else if (xmlHttp.readyState == 4) {
                 // HTTP request completed but was not successful
                 // if Number(count) < 3, then the background image is already set
                 if (Number(count) >= 3) {
