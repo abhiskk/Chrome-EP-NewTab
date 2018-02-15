@@ -129,14 +129,15 @@ backgrounds.Photo = new Model({
 
     /**
      * Displays the image.
+     * TODO: Refactor this function to make it more readable.
      */
     display: function(limitImages, cacheSize) {
         this.hideShareButtons();
         count = localStorage.getItem("count");
         if (count === null) {
             this.loadFirstImage();
-        } 
-        else if (Number(count) < 3) {
+        }
+        else if (Number(count) < this.CNT_BACKUP_IMAGES) {
             var url = "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg";
             document.body.style.background = "url(" + url + ") no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
@@ -145,17 +146,16 @@ backgrounds.Photo = new Model({
             this.setSharingLinks(localStorage.getItem("url" + count));
             this.setDownloadLink(localStorage.getItem("url" + count));
         }
-        var index = localStorage.getItem("index");
         var xmlHttp = new XMLHttpRequest();
         var parent = this;
         xmlHttp.onreadystatechange = function() {
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 var response = JSON.parse(xmlHttp.response);
-                if (Number(count) < 3) {
+                if (Number(count) < parent.CNT_BACKUP_IMAGES) {
                     // Caching top images repeatedly.
                     for (i = 0; i < cacheSize; i++) {
                         var imageUrl = response.data.children[i].data.url;
-                        if (Number(count) == 2) {
+                        if (Number(count) == parent.CNT_BACKUP_IMAGES - 1) {
                             var imageAuthor = response.data.children[i].data.author;
                             var imageTitle = response.data.children[i].data.title;
                             localStorage.setItem("url" + i, imageUrl);
@@ -167,6 +167,17 @@ backgrounds.Photo = new Model({
                     }
                 }
                 else {
+                    // Set the current background image first and then proceed with the caching the next images.
+                    var index = localStorage.getItem("index");
+                    var url = localStorage.getItem("url" + index % limitImages);
+                    document.body.style.background = "url(" + url + ") no-repeat center center fixed";
+                    document.body.style.backgroundSize = "cover";
+                    if (localStorage.getItem("author" + index % limitImages) != null) {
+                        parent.displayTitleAuthor(localStorage.getItem("title" + index % limitImages), localStorage.getItem("author" + index % limitImages));
+                    }
+                    parent.displayShareButtons();
+                    parent.setSharingLinks(url);
+                    parent.setDownloadLink(url);
                     // Caching images to be displayed.
                     for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
@@ -179,22 +190,13 @@ backgrounds.Photo = new Model({
                         imageData = new Image();
                         imageData.src = imageUrl;
                     }
-                    var url = localStorage.getItem("url" + index % limitImages);
-                    document.body.style.background = "url(" + url + ") no-repeat center center fixed";
-                    document.body.style.backgroundSize = "cover";
-                    if (localStorage.getItem("author" + index % limitImages) != null) {
-                        parent.displayTitleAuthor(localStorage.getItem("title" + index % limitImages), localStorage.getItem("author" + index % limitImages));
-                    }
-                    parent.displayShareButtons();
-                    parent.setSharingLinks(url);
-                    parent.setDownloadLink(url);
                     localStorage.setItem("index", (Number(index) + 1));
                 }
             } 
             else if (xmlHttp.readyState == 4) {
                 // HTTP request completed but was not successful
-                // if Number(count) < 3, then the background image is already set
-                if (Number(count) >= 3) {
+                // if Number(count) < parent.CNT_BACKUP_IMAGES, then the background image is already set.
+                if (Number(count) >= parent.CNT_BACKUP_IMAGES) {
                     var offlineIndex = Number(count) % parent.CNT_BACKUP_IMAGES;
                     var url = "/images/backup-wallpapers/image" + offlineIndex + ".jpg";
                     document.body.style.background = "url(" + url + ") no-repeat center center fixed";
