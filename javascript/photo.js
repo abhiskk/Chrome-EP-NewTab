@@ -154,7 +154,7 @@ backgrounds.Photo = new Model({
                 if (Number(count) < 3) {
                     // Caching top images repeatedly.
                     for (i = 0; i < cacheSize; i++) {
-                        var imageUrl = response.data.children[i].data.preview.images[0].source.url;
+                        var imageUrl = response.data.children[i].data.url;
                         if (Number(count) == 2) {
                             var imageAuthor = response.data.children[i].data.author;
                             var imageTitle = response.data.children[i].data.title;
@@ -170,7 +170,7 @@ backgrounds.Photo = new Model({
                     // Caching images to be displayed.
                     for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
-                        var imageUrl = response.data.children[nextIndex].data.preview.images[0].source.url;
+                        var imageUrl = response.data.children[nextIndex].data.url;
                         var imageAuthor = response.data.children[nextIndex].data.author;
                         var imageTitle = response.data.children[nextIndex].data.title;
                         localStorage.setItem("url" + nextIndex, imageUrl);
