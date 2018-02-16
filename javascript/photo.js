@@ -52,6 +52,14 @@ backgrounds.Photo = new Model({
         return p;
     },
 
+    /**
+     * Replace '&amp;' in url returned by reddit to '&'
+     * ref: https://www.reddit.com/r/redditdev/comments/7xqbc2/redditmedia_images_are_broken/
+     */
+    unescapeurl: function(url) {
+        return url.replace(/&amp;/g, '&');
+    },
+
     displayShareButtons: function() {
         document.getElementById("twitter_button").style.visibility = "visible";
         document.getElementById("facebook_button").style.visibility = "visible";
@@ -135,7 +143,7 @@ backgrounds.Photo = new Model({
         count = localStorage.getItem("count");
         if (count === null) {
             this.loadFirstImage();
-        } 
+        }
         else if (Number(count) < 3) {
             var url = "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg";
             document.body.style.background = "url(" + url + ") no-repeat center center fixed";
@@ -154,7 +162,7 @@ backgrounds.Photo = new Model({
                 if (Number(count) < 3) {
                     // Caching top images repeatedly.
                     for (i = 0; i < cacheSize; i++) {
-                        var imageUrl = response.data.children[i].data.url;
+                        var imageUrl = parent.unescapeurl(response.data.children[i].data.preview.images[0].source.url);
                         if (Number(count) == 2) {
                             var imageAuthor = response.data.children[i].data.author;
                             var imageTitle = response.data.children[i].data.title;
@@ -170,7 +178,7 @@ backgrounds.Photo = new Model({
                     // Caching images to be displayed.
                     for (i = 0; i < cacheSize; i++) {
                         var nextIndex = (Number(index) + 1 + i) % limitImages;
-                        var imageUrl = response.data.children[nextIndex].data.url;
+                        var imageUrl = parent.unescapeurl(response.data.children[nextIndex].data.preview.images[0].source.url);
                         var imageAuthor = response.data.children[nextIndex].data.author;
                         var imageTitle = response.data.children[nextIndex].data.title;
                         localStorage.setItem("url" + nextIndex, imageUrl);
@@ -190,7 +198,7 @@ backgrounds.Photo = new Model({
                     parent.setDownloadLink(url);
                     localStorage.setItem("index", (Number(index) + 1));
                 }
-            } 
+            }
             else if (xmlHttp.readyState == 4) {
                 // HTTP request completed but was not successful
                 // if Number(count) < 3, then the background image is already set
