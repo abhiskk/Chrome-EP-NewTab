@@ -65,6 +65,14 @@ backgrounds.Photo = new Model({
         return numbers;
     },
 
+    /**
+     * Replace '&amp;' in url returned by reddit to '&'
+     * ref: https://www.reddit.com/r/redditdev/comments/7xqbc2/redditmedia_images_are_broken/
+     */
+    unescapeUrl: function(url) {
+        return url.replace(/&amp;/g, '&');
+    },
+
     displayShareButtons: function() {
         document.getElementById("twitter_button").style.visibility = "visible";
         document.getElementById("facebook_button").style.visibility = "visible";
@@ -120,7 +128,7 @@ backgrounds.Photo = new Model({
         var imageData = {};
         imageData.title = response.data.children[imageNumber % (response.data.children.length)].data.title;
         imageData.author = response.data.children[imageNumber % (response.data.children.length)].data.author;
-        imageData.url = response.data.children[imageNumber % (response.data.children.length)].data.url;
+        imageData.url = this.unescapeUrl(response.data.children[imageNumber % (response.data.children.length)].data.preview.images[0].source.url);
         return imageData;
     },
  
