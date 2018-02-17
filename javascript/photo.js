@@ -4,52 +4,65 @@
 backgrounds.Photo = new Model({
 
     /**
-     * Number of images in /images/backup-wallpapers
+     * Total number of images in /images/backup-wallpapers
      */
-    CNT_BACKUP_IMAGES: 5,
-
+    BACKUP_IMAGES_COUNT: 5,
     /**
-     * Titles of the images in /images/backup-wallpapers
+     * Number of images to use at startup.
+     * By using cached images, we can cache images that will be
+     * fetched as well
      */
-    backupTitles: [
-        "Moonlit and lava-covered Fuego Volcano, Guatemala",
-        "Western Rim, Grand Canyon after the rain.",
-        "Queenstown, New Zealand",
-        "The Shadow of K2, projected into China across hundreds of miles.",
-        "I caught the last rays of sunset on Half Dome, Yosemite"
-    ],
+    STARTUP_IMAGE_COUNT: 2,
 
-    /**
-     * Authors of the images in /images/backup-wallpapers
-     */
-    backupAuthors: ["TheLostCrusader", "IamIrene", "Tuurby", "RoonilWazilbob", "Oxus007"],
-
-    /**
-    * Imgur urls to the images in /images/backup-wallpapers
-    */
-    backupUrls: [
-        "https://i.imgur.com/c5vIKho.jpg",
-        "https://i.imgur.com/93icizv.jpg",
-        "https://i.imgur.com/33f17F7.jpg",
-        "https://i.imgur.com/GwVvkEw.jpg",
-        "https://i.imgur.com/91ko84h.jpg"
+    offlineImages: [
+        {
+            title:  "Moonlit and lava-covered Fuego Volcano, Guatemala",
+            author: "TheLostCrusader",
+            url:    "/images/backup-wallpapers/image0.jpg"
+            //url:    "https://i.imgur.com/c5vIKho.jpg"
+        },
+        {
+            title:  "Western Rim, Grand Canyon after the rain.",
+            author: "IamIrene",
+            url:    "/images/backup-wallpapers/image1.jpg"
+            //url:    "https://i.imgur.com/93icizv.jpg"
+        },
+        {
+            title:  "Queenstown, New Zealand",
+            author: "Tuurby",
+            url:    "/images/backup-wallpapers/image2.jpg"
+            //url:    "https://i.imgur.com/33f17F7.jpg"
+        },
+        {
+            title:  "The Shadow of K2, projected into China across hundreds of miles.",
+            author: "RoonilWazilbob",
+            url:    "/images/backup-wallpapers/image3.jpg"
+            //url:    "https://i.imgur.com/GwVvkEw.jpg"
+        },
+        {
+            title:  "I caught the last rays of sunset on Half Dome, Yosemite",
+            author: "Oxus007",
+            url:    "/images/backup-wallpapers/image4.jpg"
+            //url:    "https://i.imgur.com/91ko84h.jpg"
+        }
     ],
 
     /**
      * Generates a permutation of size N.
      */
     permutation: function(N) {
-        var ar = Array();
+        var numbers = Array();
+        var ind, temp;
         for (i = 0; i < N; i++) {
-            ar.push(i);
+            numbers.push(i);
         }
-        var p = Array();
         for (i = 0; i < N; i++) {
-            ind = Math.floor(ar.length * Math.random())
-            p.push(ar[ind]);
-            ar.splice(ind, 1);
+            ind = i + Math.floor((N - i) * Math.random());
+            temp = numbers[i];
+            numbers[i] = numbers[ind];
+            numbers[ind] = temp;
         }
-        return p;
+        return numbers;
     },
 
     displayShareButtons: function() {
@@ -66,6 +79,7 @@ backgrounds.Photo = new Model({
 
     displayTitleAuthor: function(title, author) {
         // Regex matching
+        // TODO: Rename myRe and myArray to something more meaningful
         var myRe = /(?:\[|\()\s*oc\s*(?:\]|\))/gi;
         var myArray = myRe.exec(title);
         if (myArray != null) {
@@ -90,33 +104,42 @@ backgrounds.Photo = new Model({
         document.body.appendChild(div);
     },
 
-    /**
-     * Load first image.
-     */
-    loadFirstImage: function() {
-        var order = this.permutation(this.CNT_BACKUP_IMAGES);
-        localStorage.setItem("count", 0);
-        localStorage.setItem("index", 0);
-        for (i = 0; i < this.CNT_BACKUP_IMAGES; i++) {
-            localStorage.setItem("image" + i, order[i]);
-            localStorage.setItem("title" + i, this.backupTitles[order[i]]);
-            localStorage.setItem("author" + i, this.backupAuthors[order[i]]);
-            localStorage.setItem("url" + i, this.backupUrls[order[i]]);
-        }
-        var url = "/images/backup-wallpapers/image" + order[0] + ".jpg";
+    displayImage: function(image) {
+        var url = image.url;
         document.body.style.background = "url(" + url + ") no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
-        this.displayTitleAuthor(this.backupTitles[order[0]], this.backupAuthors[order[0]]);
+        this.displayTitleAuthor(image.title, image.author);
+        // TODO: Disable sharing for offline images (or provide a separate attribute shareURL)
+        this.setSharingLinks(image.url);
         this.displayShareButtons();
-        this.setSharingLinks(this.backupUrls[order[0]]);
-        this.setDownloadLink(this.backupUrls[order[0]]);
+        // TODO: Disable sharing for offline images (or provide a separate attribute shareURL)
+        this.setDownloadLink(image.url);
+    },
+
+    parseImage: function(response, imageNumber) {
+        var imageData = {};
+        imageData.title = response.data.children[imageNumber % (response.data.children.length)].data.title;
+        imageData.author = response.data.children[imageNumber % (response.data.children.length)].data.author;
+        imageData.url = response.data.children[imageNumber % (response.data.children.length)].data.url;
+        return imageData;
+    },
+ 
+    /**
+     * Setup LocalStorage before displaying first image.
+     */
+    setup: function() {
+        var order = this.permutation(this.BACKUP_IMAGES_COUNT);
+        localStorage.setItem("count", 0);
+        localStorage.setItem("cacheIndex", 0);
+        localStorage.setItem("order", JSON.stringify(order));
+        localStorage.setItem("cachedImages", JSON.stringify([]));
     },
 
     /**
      * Sets up Facebook and Twitter sharing links.
      */
     setSharingLinks: function(url) {
-        document.getElementById("twitter_button").href = "https://twitter.com/intent/tweet?text=Beautiful image&url=" + url;
+        document.getElementById("twitter_button").href = "https://twitter.com/intent/tweet?text=EPTab Chrome Extension displayed this image&url=" + url;
         document.getElementById("facebook_button").href = "https://www.facebook.com/sharer/sharer.php?u=" + url;
     },
 
@@ -129,85 +152,52 @@ backgrounds.Photo = new Model({
 
     /**
      * Displays the image.
+     * TODO: Update function name & doc. This function does more than just display
      */
-    display: function(limitImages, cacheSize) {
+    display: function(numberOfImages, cacheSize) {
         this.hideShareButtons();
-        count = localStorage.getItem("count");
+        var count = localStorage.getItem("count");
         if (count === null) {
-            this.loadFirstImage();
+            this.setup();
         } 
-        else if (Number(count) < 3) {
-            var url = "/images/backup-wallpapers/image" + localStorage.getItem("image" + count) + ".jpg";
-            document.body.style.background = "url(" + url + ") no-repeat center center fixed";
-            document.body.style.backgroundSize = "cover";
-            this.displayTitleAuthor(localStorage.getItem("title" + count), localStorage.getItem("author" + count));
-            this.displayShareButtons();
-            this.setSharingLinks(localStorage.getItem("url" + count));
-            this.setDownloadLink(localStorage.getItem("url" + count));
+        count = Number(count);
+        var cacheIndex = Number(localStorage.getItem("cacheIndex"));
+        var order = JSON.parse(localStorage.getItem("order"));
+        if (count < this.STARTUP_IMAGE_COUNT) {
+            this.displayImage(this.offlineImages[order[count]]);
+        } else {
+            // TODO: Use variable cacheReadPos & cacheWritePos to prevent errors when fetch fails
+            var cachedImageNumber = cacheIndex - this.STARTUP_IMAGE_COUNT;
+            if (cachedImageNumber < 0) {
+                cachedImageNumber += cacheSize;
+            }
+            var cachedImages = JSON.parse(localStorage.getItem("cachedImages"));
+            this.displayImage(cachedImages[cachedImageNumber]);
         }
-        var index = localStorage.getItem("index");
         var xmlHttp = new XMLHttpRequest();
         var parent = this;
         xmlHttp.onreadystatechange = function() {
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 var response = JSON.parse(xmlHttp.response);
-                if (Number(count) < 3) {
-                    // Caching top images repeatedly.
-                    for (i = 0; i < cacheSize; i++) {
-                        var imageUrl = response.data.children[i].data.url;
-                        if (Number(count) == 2) {
-                            var imageAuthor = response.data.children[i].data.author;
-                            var imageTitle = response.data.children[i].data.title;
-                            localStorage.setItem("url" + i, imageUrl);
-                            localStorage.setItem("author" + i, imageAuthor);
-                            localStorage.setItem("title" + i, imageTitle);
-                        }
-                        imageData = new Image();
-                        imageData.src = imageUrl;
-                    }
-                }
-                else {
-                    // Caching images to be displayed.
-                    for (i = 0; i < cacheSize; i++) {
-                        var nextIndex = (Number(index) + 1 + i) % limitImages;
-                        var imageUrl = response.data.children[nextIndex].data.url;
-                        var imageAuthor = response.data.children[nextIndex].data.author;
-                        var imageTitle = response.data.children[nextIndex].data.title;
-                        localStorage.setItem("url" + nextIndex, imageUrl);
-                        localStorage.setItem("author" + nextIndex, imageAuthor);
-                        localStorage.setItem("title" + nextIndex, imageTitle);
-                        imageData = new Image();
-                        imageData.src = imageUrl;
-                    }
-                    var url = localStorage.getItem("url" + index % limitImages);
-                    document.body.style.background = "url(" + url + ") no-repeat center center fixed";
-                    document.body.style.backgroundSize = "cover";
-                    if (localStorage.getItem("author" + index % limitImages) != null) {
-                        parent.displayTitleAuthor(localStorage.getItem("title" + index % limitImages), localStorage.getItem("author" + index % limitImages));
-                    }
-                    parent.displayShareButtons();
-                    parent.setSharingLinks(url);
-                    parent.setDownloadLink(url);
-                    localStorage.setItem("index", (Number(index) + 1));
-                }
-            } 
-            else if (xmlHttp.readyState == 4) {
+                // Fetch an image and cache it so it can be displayed quickly
+                var imageData = parent.parseImage(response, count);
+                var cachedImages = JSON.parse(localStorage.getItem("cachedImages"));
+                //var cacheIndex = Number(localStorage.getItem("cacheIndex"));
+                cachedImages[cacheIndex] = imageData;
+                localStorage.setItem("cachedImages", JSON.stringify(cachedImages));
+            } else if (xmlHttp.readyState == 4) { // This can probably be replaced with an else
                 // HTTP request completed but was not successful
-                // if Number(count) < 3, then the background image is already set
-                if (Number(count) >= 3) {
-                    var offlineIndex = Number(count) % parent.CNT_BACKUP_IMAGES;
-                    var url = "/images/backup-wallpapers/image" + offlineIndex + ".jpg";
-                    document.body.style.background = "url(" + url + ") no-repeat center center fixed";
-                    document.body.style.backgroundSize = "cover";
-                    parent.displayTitleAuthor(parent.backupTitles[offlineIndex], parent.backupAuthors[offlineIndex]);
-                    parent.displayShareButtons();
-                    parent.setSharingLinks(this.backupUrls[offlineIndex]);
-                    parent.setDownloadLink(this.backupUrls[offlineIndex]);
+                // if count < 3, then the background image is already set
+                if (count >= parent.STARTUP_IMAGE_COUNT) {
+                    var imageNumber = count % parent.BACKUP_IMAGES_COUNT;
+                    displayImage(parent.offlineImages[imageNumber]);
                 }
             }
         }
-        xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit="+Number(limitImages), true);
+        // TODO: Think about not calling the API after we get all images (or caching all images & then not calling?)
+        xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=" + Number(numberOfImages), true);
         xmlHttp.send(null);
-        localStorage.setItem("count", Number(count) + 1);
+        localStorage.setItem("count", count + 1);
+        localStorage.setItem("cacheIndex", (cacheIndex + 1) % cacheSize);
     }
 });
