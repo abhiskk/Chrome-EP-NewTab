@@ -119,7 +119,10 @@ backgrounds.Photo = new Model({
         var count = localStorage.getItem("count");
         var order = localStorage.getItem("order");
         var cachedImages = localStorage.getItem("cachedImages");
-        return count != null && Number(count) >= 0 && order != null && JSON.parse(order).length == this.BACKUP_IMAGES_COUNT && cachedImages != null && JSON.parse(cachedImages).length <= cacheSize;
+        var isCountValid = count != null && Number(count) >= 0;
+        var isOrderValid = order != null && JSON.parse(order).length == this.BACKUP_IMAGES_COUNT;
+        var isCachedImagesValid = cachedImages != null && JSON.parse(cachedImages).length <= cacheSize;
+        return isCountValid && isOrderValid && isCachedImagesValid;
     },
 
     /**
