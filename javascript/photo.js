@@ -134,8 +134,7 @@ backgrounds.Photo = new Model({
 
     /**
      * Displays the image.
-     * TODO: Update function name & doc. This function does more than just
-     * display
+     * TODO: Update function name & doc. This function does more than just display.
      */
     display: function(numberOfImages, cacheSize) {
         if (!this.isValidLocalStorageState(cacheSize)) {
