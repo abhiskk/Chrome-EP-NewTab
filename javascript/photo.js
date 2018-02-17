@@ -73,18 +73,6 @@ backgrounds.Photo = new Model({
         return url.replace(/&amp;/g, '&');
     },
 
-    displayShareButtons: function() {
-        document.getElementById("twitter_button").style.visibility = "visible";
-        document.getElementById("facebook_button").style.visibility = "visible";
-        document.getElementById("download_button").style.visibility = "visible";
-    },
-
-    hideShareButtons: function() {
-        document.getElementById("twitter_button").style.visibility = "hidden";
-        document.getElementById("facebook_button").style.visibility = "hidden";
-        document.getElementById("download_button").style.visibility = "hidden";
-    },
-
     displayTitleAuthor: function(title, author) {
         // Regex matching
         // TODO: Rename myRe and myArray to something more meaningful
@@ -117,11 +105,6 @@ backgrounds.Photo = new Model({
         document.body.style.background = "url(" + url + ") no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
         this.displayTitleAuthor(image.title, image.author);
-        // TODO: Disable sharing for offline images (or provide a separate attribute shareURL)
-        this.setSharingLinks(image.url);
-        this.displayShareButtons();
-        // TODO: Disable sharing for offline images (or provide a separate attribute shareURL)
-        this.setDownloadLink(image.url);
     },
 
     parseImage: function(response, imageNumber) {
@@ -131,7 +114,7 @@ backgrounds.Photo = new Model({
         imageData.url = this.unescapeUrl(response.data.children[imageNumber % (response.data.children.length)].data.preview.images[0].source.url);
         return imageData;
     },
- 
+
     /**
      * Setup LocalStorage before displaying first image.
      */
@@ -144,30 +127,14 @@ backgrounds.Photo = new Model({
     },
 
     /**
-     * Sets up Facebook and Twitter sharing links.
-     */
-    setSharingLinks: function(url) {
-        document.getElementById("twitter_button").href = "https://twitter.com/intent/tweet?text=EPTab Chrome Extension displayed this image&url=" + url;
-        document.getElementById("facebook_button").href = "https://www.facebook.com/sharer/sharer.php?u=" + url;
-    },
-
-    /**
-     * Sets up the download link for download_button.
-     */
-    setDownloadLink: function(url) {
-        document.getElementById("download_button").href = url;
-    },
-
-    /**
      * Displays the image.
      * TODO: Update function name & doc. This function does more than just display
      */
     display: function(numberOfImages, cacheSize) {
-        this.hideShareButtons();
         var count = localStorage.getItem("count");
         if (count === null) {
             this.setup();
-        } 
+        }
         count = Number(count);
         var cacheIndex = Number(localStorage.getItem("cacheIndex"));
         var order = JSON.parse(localStorage.getItem("order"));
