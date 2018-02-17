@@ -163,9 +163,6 @@ backgrounds.Photo = new Model({
         count = Number(count);
         var cacheIndex = Number(localStorage.getItem("cacheIndex"));
         var order = JSON.parse(localStorage.getItem("order"));
-        console.log("Order is: " + order);
-        console.log("Ct is: " + count);
-        console.log("OrderCt is: " + order[count]);
         if (count < this.STARTUP_IMAGE_COUNT) {
             this.displayImage(this.offlineImages[order[count]]);
         } else {
@@ -184,7 +181,6 @@ backgrounds.Photo = new Model({
                 var response = JSON.parse(xmlHttp.response);
                 // Fetch an image and cache it so it can be displayed quickly
                 var imageData = parent.parseImage(response, count);
-                console.log(imageData);
                 var cachedImages = JSON.parse(localStorage.getItem("cachedImages"));
                 //var cacheIndex = Number(localStorage.getItem("cacheIndex"));
                 cachedImages[cacheIndex] = imageData;
