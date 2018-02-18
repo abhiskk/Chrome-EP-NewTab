@@ -51,12 +51,12 @@ backgrounds.Photo = new Model({
      * Generates a permutation of size N.
      */
     permutation: function(N) {
-        var numbers = Array();
-        var ind, temp;
+        var i, ind, temp, numbers;
+        numbers = [];
         for (i = 0; i < N; i++) {
             numbers.push(i);
         }
-        for (i = 0; i < N; i++) {
+        for (i = 0; i < N - 1; i++) {
             ind = i + Math.floor((N - i) * Math.random());
             temp = numbers[i];
             numbers[i] = numbers[ind];
@@ -115,64 +115,67 @@ backgrounds.Photo = new Model({
         return imageData;
     },
 
+    isValidLocalStorageState: function(cacheSize) {
+        var count = localStorage.getItem("count");
+        var order = localStorage.getItem("order");
+        var cachedImages = localStorage.getItem("cachedImages");
+        var isCountValid = count != null && Number(count) >= 0;
+        var isOrderValid = order != null && JSON.parse(order).length == this.BACKUP_IMAGES_COUNT;
+        var isCachedImagesValid = cachedImages != null && JSON.parse(cachedImages).length <= cacheSize;
+        return isCountValid && isOrderValid && isCachedImagesValid;
+    },
+
     /**
      * Setup LocalStorage before displaying first image.
      */
     setup: function() {
         var order = this.permutation(this.BACKUP_IMAGES_COUNT);
         localStorage.setItem("count", 0);
-        localStorage.setItem("cacheIndex", 0);
         localStorage.setItem("order", JSON.stringify(order));
         localStorage.setItem("cachedImages", JSON.stringify([]));
     },
 
     /**
      * Displays the image.
-     * TODO: Update function name & doc. This function does more than just display
+     * TODO: Update function name & doc. This function does more than just display.
      */
     display: function(numberOfImages, cacheSize) {
-        var count = localStorage.getItem("count");
-        if (count === null) {
+        if (!this.isValidLocalStorageState(cacheSize)) {
             this.setup();
         }
-        count = Number(count);
-        var cacheIndex = Number(localStorage.getItem("cacheIndex"));
+        // From this point onwards, count, order and cachedImages are in a valid state (to know what a valid state is, refer to the IsValidLocalStorage function).
+        var count = Number(localStorage.getItem("count"));
         var order = JSON.parse(localStorage.getItem("order"));
-        if (count < this.STARTUP_IMAGE_COUNT) {
-            this.displayImage(this.offlineImages[order[count]]);
+        var cachedImages = JSON.parse(localStorage.getItem("cachedImages"));
+        // We display backup images in the following cases.
+        // * count < STARTUP_IMAGE_COUNT: We are yet to finish the quota of offline images before we can use images from the cache.
+        // * count >= STARTUP_IMAGE_COUNT but cachedImages.length == 0: Can happen when HTTP requests to r/EarthPorn fail. We fall back to display the backup images.
+        if (count < this.STARTUP_IMAGE_COUNT || cachedImages.length == 0) {
+            var order_index = count % this.BACKUP_IMAGES_COUNT;
+            this.displayImage(this.offlineImages[order[order_index]]);
         } else {
-            // TODO: Use variable cacheReadPos & cacheWritePos to prevent errors when fetch fails
-            var cachedImageNumber = cacheIndex - this.STARTUP_IMAGE_COUNT;
-            if (cachedImageNumber < 0) {
-                cachedImageNumber += cacheSize;
-            }
-            var cachedImages = JSON.parse(localStorage.getItem("cachedImages"));
-            this.displayImage(cachedImages[cachedImageNumber]);
+            this.displayImage(cachedImages[0]);
+            // Once we consume an image from the cache, remove it from the cache.
+            cachedImages.splice(0, 1);
+            localStorage.setItem("cachedImages", JSON.stringify(cachedImages));
         }
         var xmlHttp = new XMLHttpRequest();
         var parent = this;
         xmlHttp.onreadystatechange = function() {
+            // If the HTTP request is successful, then we store the image received into our cache. If the request is unsuccessful, the cache simply does not get updated.
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 var response = JSON.parse(xmlHttp.response);
                 // Fetch an image and cache it so it can be displayed quickly
                 var imageData = parent.parseImage(response, count);
-                var cachedImages = JSON.parse(localStorage.getItem("cachedImages"));
-                //var cacheIndex = Number(localStorage.getItem("cacheIndex"));
-                cachedImages[cacheIndex] = imageData;
+                cachedImages.push(imageData);
                 localStorage.setItem("cachedImages", JSON.stringify(cachedImages));
-            } else if (xmlHttp.readyState == 4) { // This can probably be replaced with an else
-                // HTTP request completed but was not successful
-                // if count < 3, then the background image is already set
-                if (count >= parent.STARTUP_IMAGE_COUNT) {
-                    var imageNumber = count % parent.BACKUP_IMAGES_COUNT;
-                    displayImage(parent.offlineImages[imageNumber]);
-                }
             }
         }
-        // TODO: Think about not calling the API after we get all images (or caching all images & then not calling?)
-        xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=" + Number(numberOfImages), true);
-        xmlHttp.send(null);
+        // We send an HTTP request only if our cache is not full.
+        if (cachedImages.length < cacheSize) {
+            xmlHttp.open("GET", "https://www.reddit.com/r/EarthPorn/top/.json?limit=" + Number(numberOfImages), true);
+            xmlHttp.send(null);
+        }
         localStorage.setItem("count", count + 1);
-        localStorage.setItem("cacheIndex", (cacheIndex + 1) % cacheSize);
     }
 });
